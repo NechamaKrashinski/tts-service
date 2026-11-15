@@ -2,7 +2,7 @@ import os
 import subprocess
 import tempfile
 from pathlib import Path
-import google.auth
+from google.oauth2.credentials import Credentials
 
 from fastapi import FastAPI, Header, HTTPException
 from pydantic import BaseModel
@@ -79,8 +79,13 @@ def finalize(req: FinalizeRequest, x_service_secret: str = Header("")):
             check=True, capture_output=True,
         )
 
-        creds, _ = google.auth.default(
-            scopes=["https://www.googleapis.com/auth/drive"]
+        creds = Credentials(
+            token=None,
+            refresh_token=os.environ["DRIVE_REFRESH_TOKEN"],
+            client_id=os.environ["DRIVE_CLIENT_ID"],
+            client_secret=os.environ["DRIVE_CLIENT_SECRET"],
+            token_uri="https://oauth2.googleapis.com/token",
+            scopes=["https://www.googleapis.com/auth/drive"],
         )
         drive = build("drive", "v3", credentials=creds)
         file = drive.files().create(

@@ -1,2 +1,5 @@
 __pycache__/
 *.pyc
+client_secret_*.json
+drive_oauth.json
+get_drive_token.py
